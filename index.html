@@ -61,7 +61,11 @@
       handsReady = true;
     });
     const camera = new Camera(video, { onFrame: async () => { await hands.send({ image: video }); }, width: 1280, height: 720 });
-    camera.start().then(() => { loadingEl.style.display = 'none'; }).catch((error) => { loadingEl.innerHTML = `<div>CAMERA INIT FAILED<br/><small>${error.message}</small></div>`; });
+    camera.start().then(() => {
+      loadingEl.style.display = 'none';
+    }).catch(() => {
+      loadingEl.innerHTML = '<div>CAMERA ACCESS DENIED<br/><small>Please allow camera permission and refresh.</small></div>';
+    });
 
     // 2) Gesture detection functions
     const FINGER = { thumb: [4, 2], index: [8, 5], middle: [12, 9], ring: [16, 13], pinky: [20, 17] };
