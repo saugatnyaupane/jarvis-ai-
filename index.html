@@ -51,7 +51,7 @@
     canvas.width = width; canvas.height = height;
     let latestHands = [], lastDetectionAt = 0, activeGesture = 'NONE', flashAlpha = 0, globalObjectScale = 1, lastTwoHandDistance = null, frame = 0, fps = 0, lastFpsTime = performance.now(), fpsFrames = 0, handsReady = false;
     const shockwaves = [], energySparks = {}, handTrails = new Map();
-    const HAND_SMOOTHING_FACTOR = 0.35;
+    const HAND_SMOOTHING_ALPHA = 0.35;
     const handSmoothing = new Map();
 
     // 1) MediaPipe initialization
@@ -66,9 +66,9 @@
         const prev = handSmoothing.get(idx);
         const smoothed = prev
           ? points.map((pt, i) => ({
-            x: prev[i].x + (pt.x - prev[i].x) * HAND_SMOOTHING_FACTOR,
-            y: prev[i].y + (pt.y - prev[i].y) * HAND_SMOOTHING_FACTOR,
-            z: prev[i].z + (pt.z - prev[i].z) * HAND_SMOOTHING_FACTOR,
+            x: prev[i].x + (pt.x - prev[i].x) * HAND_SMOOTHING_ALPHA,
+            y: prev[i].y + (pt.y - prev[i].y) * HAND_SMOOTHING_ALPHA,
+            z: prev[i].z + (pt.z - prev[i].z) * HAND_SMOOTHING_ALPHA,
           }))
           : points;
         handSmoothing.set(idx, smoothed);
@@ -97,9 +97,10 @@
     const isPeace = (hand) => isFingerExtended(hand, ...FINGER.index) && isFingerExtended(hand, ...FINGER.middle) && !isFingerExtended(hand, ...FINGER.ring) && !isFingerExtended(hand, ...FINGER.pinky);
     const pinchDistance = (hand) => dist(hand.points[4], hand.points[8]);
     const palmCenter = (hand) => { const p0 = hand.points[0], p5 = hand.points[5], p17 = hand.points[17]; return { x: (p0.x + p5.x + p17.x) / 3, y: (p0.y + p5.y + p17.y) / 3 }; };
+    const createHandTrail = (center) => ({ last: center, vx: 0, vy: 0, grabbedObj: null, grabOffset: 0, cooldowns: {}, history: [center] });
 
     // 3) Holographic object class (update/draw methods)
-    const ROTATION_VELS = { cube: 0, sphere: 0.004, arc: 0.006, panel: 0.002, orb: 0.005 };
+    const IDLE_ROTATION_VELOCITIES = { cube: 0, sphere: 0.004, arc: 0.006, panel: 0.002, orb: 0.005 };
     class HolographicObject {
       constructor(type, x, y, size = 44) {
         this.type = type;
@@ -109,7 +110,7 @@
         this.baseSize = size;
         this.scale = 1;
         this.rotation = 0;
-        this.rotationVel = ROTATION_VELS[type] ?? 0.004;
+        this.rotationVel = IDLE_ROTATION_VELOCITIES[type] ?? 0.004;
         this.hovered = false;
         this.grabbed = false;
         this.activePulse = 0;
@@ -240,7 +241,7 @@
       const handStates = latestHands.map((hand) => ({ hand, open: isOpenPalm(hand), fist: isFist(hand), point: isPointing(hand), peace: isPeace(hand), pinch: pinchDistance(hand) < 30 }));
       for (const state of handStates) {
         const center = palmCenter(state.hand);
-        if (!handTrails.has(state.hand.idx)) handTrails.set(state.hand.idx, { last: center, vx: 0, vy: 0, grabbedObj: null, grabOffset: 0, cooldowns: {}, history: [center] });
+        if (!handTrails.has(state.hand.idx)) handTrails.set(state.hand.idx, createHandTrail(center));
         const tr = handTrails.get(state.hand.idx);
         tr.vx = center.x - tr.last.x; tr.vy = center.y - tr.last.y; tr.last = center;
         tr.history.push({ x: center.x, y: center.y });
