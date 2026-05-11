@@ -54,7 +54,7 @@
 
     // 1) MediaPipe initialization
     const hands = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
-    hands.setOptions({ maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.7, minTrackingConfidence: 0.6 });
+    hands.setOptions({ maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.7, minTrackingConfidence: 0.7 });
     hands.onResults((results) => {
       latestHands = (results.multiHandLandmarks || []).map((landmarks, idx) => ({ points: landmarks.map((lm) => ({ x: lm.x * width, y: lm.y * height, z: lm.z })), idx }));
       if (latestHands.length > 0) lastDetectionAt = performance.now();
@@ -63,7 +63,8 @@
     const camera = new Camera(video, { onFrame: async () => { await hands.send({ image: video }); }, width: 1280, height: 720 });
     camera.start().then(() => {
       loadingEl.style.display = 'none';
-    }).catch(() => {
+    }).catch((error) => {
+      console.error('Camera initialization failed:', error);
       loadingEl.innerHTML = '<div>CAMERA ACCESS DENIED<br/><small>Please allow camera permission and refresh.</small></div>';
     });
 
