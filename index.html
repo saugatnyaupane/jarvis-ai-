@@ -110,7 +110,7 @@
         this.baseSize = size;
         this.scale = 1;
         this.rotation = 0;
-        this.rotationVel = IDLE_ROTATION_VELOCITIES[type] ?? 0.004;
+        this.rotationVel = IDLE_ROTATION_VELOCITIES[type] ?? 0;
         this.hovered = false;
         this.grabbed = false;
         this.activePulse = 0;
@@ -271,7 +271,6 @@
       holoObjects.forEach((obj) => obj.hovered = false);
       for (const state of handStates) {
         const indexTip = state.hand.points[8], center = palmCenter(state.hand), tr = handTrails.get(state.hand.idx);
-        if (!tr) continue;
         let nearest = null, nearestDist = Infinity;
         for (const obj of holoObjects) { const d = dist(indexTip, obj.pos); if (d < 40 && d < nearestDist) { nearest = obj; nearestDist = d; } }
         if (nearest) nearest.hovered = true;
