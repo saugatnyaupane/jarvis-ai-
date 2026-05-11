@@ -5,20 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>J.A.R.V.I.S. Holographic Interface</title>
   <style>
-    :root { --bg: #020818; --cyan: #00f5ff; --blue: #0080ff; --gold: #ffd700; --text: #b8f7ff; }
+    :root { --bg: #07080c; --cyan: #8ee7ff; --blue: #4a8fbd; --gold: #f6d27a; --text: #e3edf5; --warm: #f7d9a4; }
     * { box-sizing: border-box; }
-    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: radial-gradient(circle at center, #06132f 0%, #020818 45%, #000 100%); color: var(--text); font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; }
-    body::before { content: ""; position: fixed; inset: 0; background: linear-gradient(rgba(0, 245, 255, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 128, 255, 0.06) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 1; }
-    body::after { content: ""; position: fixed; inset: 0; background: radial-gradient(circle at center, transparent 45%, rgba(0, 0, 0, 0.75) 100%); pointer-events: none; z-index: 5; }
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: radial-gradient(circle at center, #11151c 0%, #07080c 55%, #000 100%); color: var(--text); font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; }
+    body::before { content: ""; position: fixed; inset: 0; background: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px); background-size: 52px 52px; pointer-events: none; z-index: 1; opacity: 0.2; }
+    body::after { content: ""; position: fixed; inset: 0; background: radial-gradient(circle at center, transparent 52%, rgba(0, 0, 0, 0.82) 100%); pointer-events: none; z-index: 5; }
     #app { position: fixed; inset: 0; overflow: hidden; }
-    #video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.3; transform: scaleX(-1); filter: saturate(1.25) contrast(1.2); z-index: 0; }
+    #video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.7; transform: scaleX(-1); filter: contrast(1.05) brightness(1.02); z-index: 0; }
     #canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; }
-    #scanline { position: absolute; inset: 0; z-index: 3; pointer-events: none; background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0) 2px, rgba(0, 245, 255, 0.05) 3px, rgba(0, 245, 255, 0.02) 4px); mix-blend-mode: screen; animation: scanDrift 8s linear infinite; }
+    #scanline { position: absolute; inset: 0; z-index: 3; pointer-events: none; background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0) 3px, rgba(255, 255, 255, 0.03) 4px, rgba(255, 255, 255, 0.015) 6px); mix-blend-mode: soft-light; opacity: 0.45; animation: scanDrift 10s linear infinite; }
     @keyframes scanDrift { 0% { transform: translateY(0); } 100% { transform: translateY(8px); } }
-    #legend { position: absolute; bottom: 16px; left: 16px; z-index: 6; max-width: 300px; padding: 10px 12px; border: 1px solid rgba(0, 245, 255, 0.5); border-radius: 8px; background: rgba(1, 11, 22, 0.65); box-shadow: 0 0 20px rgba(0, 245, 255, 0.22); font-size: 12px; line-height: 1.35; }
+    #legend { position: absolute; bottom: 16px; left: 16px; z-index: 6; max-width: 320px; padding: 10px 12px; border: 1px solid rgba(230, 237, 243, 0.35); border-radius: 8px; background: rgba(4, 8, 12, 0.55); box-shadow: 0 0 14px rgba(0, 0, 0, 0.45); font-size: 12px; line-height: 1.35; }
     #legend.hidden { display: none; }
     #loading, #noSignal { position: absolute; inset: 0; display: grid; place-items: center; z-index: 7; pointer-events: none; text-align: center; background: rgba(0, 3, 12, 0.84); letter-spacing: 0.08em; }
-    #noSignal { background: transparent; z-index: 4; display: none; color: rgba(0, 245, 255, 0.8); text-shadow: 0 0 12px rgba(0, 245, 255, 0.6); animation: pulseText 1.4s ease-in-out infinite; }
+    #noSignal { background: transparent; z-index: 4; display: none; color: rgba(230, 237, 243, 0.85); text-shadow: 0 0 10px rgba(255, 255, 255, 0.35); animation: pulseText 1.4s ease-in-out infinite; }
     @keyframes pulseText { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
     .reactor { width: 90px; height: 90px; border-radius: 50%; border: 2px solid rgba(0, 245, 255, 0.8); box-shadow: 0 0 18px rgba(0, 245, 255, 0.8), inset 0 0 18px rgba(0, 128, 255, 0.45); position: relative; margin: 0 auto 20px; animation: spin 2.6s linear infinite; }
     .reactor::before, .reactor::after { content: ""; position: absolute; inset: 14px; border-radius: 50%; border: 2px dashed rgba(255, 215, 0, 0.8); animation: spinReverse 2s linear infinite; }
@@ -31,7 +31,7 @@
     <video id="video" autoplay playsinline muted></video>
     <canvas id="canvas"></canvas>
     <div id="scanline"></div>
-    <div id="legend"><strong>Gesture Legend [H]</strong><br />OPEN PALM: Shockwave + flash<br />POINTING: Laser beam<br />PINCH: Activate object<br />TWO HANDS APART: Scale up objects<br />TWO HANDS TOGETHER: Scale down objects<br />PEACE SIGN: Spawn object</div>
+    <div id="legend"><strong>Gesture Legend [H]</strong><br />OPEN PALM: Shockwave + flash<br />POINTING: Laser beam<br />PINCH: Focus object<br />FIST: Grab + rotate<br />TWO HANDS APART: Scale up objects<br />TWO HANDS TOGETHER: Scale down objects<br />PEACE SIGN: Reset objects</div>
     <div id="loading"><div><div class="reactor"></div><div>INITIALIZING HOLOGRAPHIC INTERFACE...</div></div></div>
     <div id="noSignal"><div><div>NO SIGNAL — AWAITING INPUT</div><div style="margin-top: 10px; font-size: 11px; opacity: 0.7;">◉</div></div></div>
   </div>
@@ -46,17 +46,35 @@
     const loadingEl = document.getElementById('loading');
     const legendEl = document.getElementById('legend');
     const noSignalEl = document.getElementById('noSignal');
-    const COLORS = { cyan: '#00f5ff', blue: '#0080ff', gold: '#ffd700', white: '#e6ffff' };
+    const COLORS = { cyan: '#8ee7ff', blue: '#4a8fbd', gold: '#f6d27a', white: '#f4f7ff', soft: 'rgba(235, 244, 255, 0.75)', warm: 'rgba(247, 217, 164, 0.85)' };
     let width = window.innerWidth, height = window.innerHeight;
     canvas.width = width; canvas.height = height;
     let latestHands = [], lastDetectionAt = 0, activeGesture = 'NONE', flashAlpha = 0, globalObjectScale = 1, lastTwoHandDistance = null, frame = 0, fps = 0, lastFpsTime = performance.now(), fpsFrames = 0, handsReady = false;
     const shockwaves = [], energySparks = {}, handTrails = new Map();
+    const SMOOTHING = 0.35;
+    const handSmoothing = new Map();
 
     // 1) MediaPipe initialization
     const hands = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
     hands.setOptions({ maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.7, minTrackingConfidence: 0.7 });
     hands.onResults((results) => {
-      latestHands = (results.multiHandLandmarks || []).map((landmarks, idx) => ({ points: landmarks.map((lm) => ({ x: lm.x * width, y: lm.y * height, z: lm.z })), idx }));
+      const rawHands = results.multiHandLandmarks || [];
+      const activeIds = new Set();
+      latestHands = rawHands.map((landmarks, idx) => {
+        activeIds.add(idx);
+        const points = landmarks.map((lm) => ({ x: lm.x * width, y: lm.y * height, z: lm.z }));
+        const prev = handSmoothing.get(idx);
+        const smoothed = prev
+          ? points.map((pt, i) => ({
+            x: prev[i].x + (pt.x - prev[i].x) * SMOOTHING,
+            y: prev[i].y + (pt.y - prev[i].y) * SMOOTHING,
+            z: prev[i].z + (pt.z - prev[i].z) * SMOOTHING,
+          }))
+          : points;
+        handSmoothing.set(idx, smoothed);
+        return { points: smoothed, idx };
+      });
+      for (const key of handSmoothing.keys()) if (!activeIds.has(key)) handSmoothing.delete(key);
       if (latestHands.length > 0) lastDetectionAt = performance.now();
       handsReady = true;
     });
@@ -81,8 +99,22 @@
     const palmCenter = (hand) => { const p0 = hand.points[0], p5 = hand.points[5], p17 = hand.points[17]; return { x: (p0.x + p5.x + p17.x) / 3, y: (p0.y + p5.y + p17.y) / 3 }; };
 
     // 3) Holographic object class (update/draw methods)
+    const ROTATION_VELS = { cube: 0, sphere: 0.004, arc: 0.006, panel: 0.002, orb: 0.005 };
     class HolographicObject {
-      constructor(type, x, y, size = 44) { this.type = type; this.home = { x, y }; this.pos = { x, y }; this.vel = { x: (Math.random() - 0.5) * 1.4, y: (Math.random() - 0.5) * 1.4 }; this.baseSize = size; this.scale = 1; this.rotation = Math.random() * Math.PI * 2; this.rotationVel = 0.01 + Math.random() * 0.02; this.hovered = false; this.grabbed = false; this.activePulse = 0; this.dataTextOffset = 0; }
+      constructor(type, x, y, size = 44) {
+        this.type = type;
+        this.home = { x, y };
+        this.pos = { x, y };
+        this.vel = { x: 0, y: 0 };
+        this.baseSize = size;
+        this.scale = 1;
+        this.rotation = 0;
+        this.rotationVel = ROTATION_VELS[type] ?? 0.004;
+        this.hovered = false;
+        this.grabbed = false;
+        this.activePulse = 0;
+        this.dataTextOffset = 0;
+      }
       activate() { this.activePulse = 1; }
       update(bounds, dt) {
         if (!this.grabbed) {
@@ -90,20 +122,28 @@
           if (this.pos.x < this.baseSize || this.pos.x > bounds.w - this.baseSize) this.vel.x *= -1;
           if (this.pos.y < this.baseSize || this.pos.y > bounds.h - this.baseSize) this.vel.y *= -1;
           const toHomeX = this.home.x - this.pos.x, toHomeY = this.home.y - this.pos.y;
-          this.vel.x = (this.vel.x + toHomeX * 0.0009) * 0.993; this.vel.y = (this.vel.y + toHomeY * 0.0009) * 0.993;
+          this.vel.x = (this.vel.x + toHomeX * 0.0006) * 0.99; this.vel.y = (this.vel.y + toHomeY * 0.0006) * 0.99;
         }
-        this.rotation += this.rotationVel; this.scale += ((this.hovered ? 1.1 : 1) - this.scale) * 0.12; this.activePulse = Math.max(0, this.activePulse - dt * 0.0028); this.dataTextOffset = (this.dataTextOffset + 1) % 10000;
+        if (!this.grabbed) this.rotation += this.rotationVel;
+        this.scale += ((this.hovered ? 1.08 : 1) - this.scale) * 0.12;
+        this.activePulse = Math.max(0, this.activePulse - dt * 0.0022);
+        this.dataTextOffset = (this.dataTextOffset + 1) % 10000;
       }
       draw(g, scaleMultiplier = 1) {
         const s = this.baseSize * this.scale * scaleMultiplier;
         g.save(); g.translate(this.pos.x, this.pos.y); g.rotate(this.rotation);
-        g.globalAlpha = 0.75 + this.activePulse * 0.5; g.strokeStyle = COLORS.cyan; g.fillStyle = 'rgba(0, 245, 255, 0.08)'; g.shadowColor = this.hovered ? COLORS.gold : COLORS.cyan; g.shadowBlur = 20 + this.activePulse * 40; g.lineWidth = 1.8;
-        if (this.type === 'cube') { g.strokeRect(-s * 0.45, -s * 0.45, s * 0.9, s * 0.9); g.rotate(Math.PI / 4); g.strokeRect(-s * 0.35, -s * 0.35, s * 0.7, s * 0.7); }
-        else if (this.type === 'sphere') { g.beginPath(); g.arc(0, 0, s * 0.45, 0, Math.PI * 2); g.stroke(); g.beginPath(); g.ellipse(0, 0, s * 0.45, s * 0.2, this.rotation * 1.7, 0, Math.PI * 2); g.stroke(); g.beginPath(); g.ellipse(0, 0, s * 0.45, s * 0.2, this.rotation * -1.3, 0, Math.PI * 2); g.stroke(); }
-        else if (this.type === 'arc') { for (let i = 0; i < 3; i++) { g.beginPath(); g.strokeStyle = i % 2 ? COLORS.gold : COLORS.cyan; g.arc(0, 0, s * (0.2 + i * 0.15), this.rotation * (i + 1), this.rotation * (i + 1) + Math.PI * 1.2); g.stroke(); } }
-        else if (this.type === 'panel') { g.strokeStyle = COLORS.blue; g.fillStyle = 'rgba(0, 128, 255, 0.12)'; g.fillRect(-s * 0.65, -s * 0.4, s * 1.3, s * 0.8); g.strokeRect(-s * 0.65, -s * 0.4, s * 1.3, s * 0.8); g.font = `${Math.max(9, s * 0.12)}px monospace`; g.fillStyle = 'rgba(0, 245, 255, 0.8)'; for (let i = 0; i < 5; i++) g.fillText(`${`${(this.dataTextOffset + i * 37) % 9999}`.padStart(4, '0')} :: ${Math.random().toFixed(4)}`, -s * 0.58, -s * 0.2 + i * s * 0.15); }
-        else if (this.type === 'orb') { const grad = g.createRadialGradient(0, 0, 0, 0, 0, s * 0.5); grad.addColorStop(0, 'rgba(255,215,0,0.8)'); grad.addColorStop(0.4, 'rgba(0,245,255,0.45)'); grad.addColorStop(1, 'rgba(0,245,255,0.02)'); g.fillStyle = grad; g.beginPath(); g.arc(0, 0, s * 0.5, 0, Math.PI * 2); g.fill(); g.strokeStyle = COLORS.cyan; g.beginPath(); g.arc(0, 0, s * 0.42, 0, Math.PI * 2); g.stroke(); }
-        if (this.hovered) { g.strokeStyle = COLORS.gold; g.lineWidth = 1; g.beginPath(); g.arc(0, 0, s * 0.72, frame * 0.03, frame * 0.03 + Math.PI * 1.6); g.stroke(); }
+        g.globalAlpha = 0.65 + this.activePulse * 0.4; g.strokeStyle = COLORS.cyan; g.fillStyle = 'rgba(142, 231, 255, 0.05)'; g.shadowColor = this.hovered ? COLORS.gold : COLORS.cyan; g.shadowBlur = 12 + this.activePulse * 24; g.lineWidth = 1.6;
+        if (this.type === 'cube') { g.strokeRect(-s * 0.45, -s * 0.45, s * 0.9, s * 0.9); g.beginPath(); g.moveTo(-s * 0.45, -s * 0.45); g.lineTo(-s * 0.25, -s * 0.65); g.lineTo(s * 0.65, -s * 0.65); g.lineTo(s * 0.45, -s * 0.45); g.stroke(); }
+        else if (this.type === 'sphere') { g.beginPath(); g.arc(0, 0, s * 0.45, 0, Math.PI * 2); g.stroke(); g.beginPath(); g.ellipse(0, 0, s * 0.45, s * 0.2, this.rotation * 1.4, 0, Math.PI * 2); g.stroke(); g.beginPath(); g.ellipse(0, 0, s * 0.45, s * 0.2, this.rotation * -1.1, 0, Math.PI * 2); g.stroke(); }
+        else if (this.type === 'arc') { for (let i = 0; i < 3; i++) { g.beginPath(); g.strokeStyle = i % 2 ? COLORS.gold : COLORS.cyan; g.arc(0, 0, s * (0.22 + i * 0.14), this.rotation * (i + 1), this.rotation * (i + 1) + Math.PI * 1.05); g.stroke(); } }
+        else if (this.type === 'panel') {
+          g.strokeStyle = COLORS.blue; g.fillStyle = 'rgba(90, 144, 188, 0.14)';
+          g.fillRect(-s * 0.65, -s * 0.4, s * 1.3, s * 0.8); g.strokeRect(-s * 0.65, -s * 0.4, s * 1.3, s * 0.8);
+          g.font = `${Math.max(9, s * 0.12)}px monospace`; g.fillStyle = 'rgba(235, 244, 255, 0.75)';
+          for (let i = 0; i < 5; i++) { const telemetry = ((this.dataTextOffset + i * 37) % 1000) / 1000; g.fillText(`${`${(this.dataTextOffset + i * 37) % 9999}`.padStart(4, '0')} :: ${telemetry.toFixed(3)}`, -s * 0.58, -s * 0.2 + i * s * 0.15); }
+        }
+        else if (this.type === 'orb') { const grad = g.createRadialGradient(0, 0, 0, 0, 0, s * 0.5); grad.addColorStop(0, 'rgba(246, 210, 122, 0.7)'); grad.addColorStop(0.45, 'rgba(142, 231, 255, 0.35)'); grad.addColorStop(1, 'rgba(142, 231, 255, 0.02)'); g.fillStyle = grad; g.beginPath(); g.arc(0, 0, s * 0.5, 0, Math.PI * 2); g.fill(); g.strokeStyle = COLORS.cyan; g.beginPath(); g.arc(0, 0, s * 0.42, 0, Math.PI * 2); g.stroke(); }
+        if (this.hovered) { g.strokeStyle = COLORS.gold; g.lineWidth = 1; g.beginPath(); g.arc(0, 0, s * 0.72, frame * 0.025, frame * 0.025 + Math.PI * 1.4); g.stroke(); }
         g.restore();
       }
     }
@@ -114,76 +154,97 @@
     class Particle {
       constructor(x, y, color = COLORS.cyan, speed = 2.4, life = 30) { this.pos = { x, y }; const a = Math.random() * Math.PI * 2, m = Math.random() * speed; this.vel = { x: Math.cos(a) * m, y: Math.sin(a) * m }; this.life = life; this.maxLife = life; this.size = 1 + Math.random() * 3; this.color = color; }
       update(objects) { this.pos.x += this.vel.x; this.pos.y += this.vel.y; this.life--; this.vel.x *= 0.97; this.vel.y *= 0.97; for (const obj of objects) { const d = Math.hypot(this.pos.x - obj.pos.x, this.pos.y - obj.pos.y); if (d < obj.baseSize * 0.6 * globalObjectScale && d > 0) { const nx = (this.pos.x - obj.pos.x) / d, ny = (this.pos.y - obj.pos.y) / d; this.vel.x += nx * 0.8; this.vel.y += ny * 0.8; } } }
-      draw(g) { const alpha = Math.max(0, this.life / this.maxLife); g.save(); g.globalAlpha = alpha; g.fillStyle = this.color; g.shadowColor = this.color; g.shadowBlur = 16; g.beginPath(); g.arc(this.pos.x, this.pos.y, this.size, 0, Math.PI * 2); g.fill(); g.restore(); }
+      draw(g) { const alpha = Math.max(0, this.life / this.maxLife); g.save(); g.globalAlpha = alpha; g.fillStyle = this.color; g.shadowColor = this.color; g.shadowBlur = 10; g.beginPath(); g.arc(this.pos.x, this.pos.y, this.size, 0, Math.PI * 2); g.fill(); g.restore(); }
       get dead() { return this.life <= 0; }
     }
     class ParticleSystem {
-      constructor() { this.items = []; this.dust = Array.from({ length: 70 }, () => ({ x: Math.random() * width, y: Math.random() * height, v: 0.12 + Math.random() * 0.35, r: Math.random() * 1.6 + 0.3 })); }
+      constructor() { this.items = []; this.dust = Array.from({ length: 45 }, () => ({ x: Math.random() * width, y: Math.random() * height, v: 0.1 + Math.random() * 0.25, r: Math.random() * 1.4 + 0.3 })); }
       emit(x, y, count = 1, color = COLORS.cyan, speed = 2.4, life = 30) { for (let i = 0; i < count; i++) this.items.push(new Particle(x, y, color, speed, life)); }
       update(objects) { this.items.forEach((p) => p.update(objects)); this.items = this.items.filter((p) => !p.dead); for (const d of this.dust) { d.y -= d.v; if (d.y < -5) { d.y = height + 5; d.x = Math.random() * width; } } }
-      drawDust(g) { g.save(); g.globalAlpha = 0.35; g.fillStyle = 'rgba(0, 245, 255, 0.6)'; for (const d of this.dust) { g.beginPath(); g.arc(d.x, d.y, d.r, 0, Math.PI * 2); g.fill(); } g.restore(); }
+      drawDust(g) { g.save(); g.globalAlpha = 0.25; g.fillStyle = 'rgba(200, 220, 235, 0.5)'; for (const d of this.dust) { g.beginPath(); g.arc(d.x, d.y, d.r, 0, Math.PI * 2); g.fill(); } g.restore(); }
       draw(g) { this.items.forEach((p) => p.draw(g)); }
     }
     const particles = new ParticleSystem();
 
     // 5) String/beam rendering functions
-    function drawHandSkeleton(g, hand) {
+    function drawHandSkeleton(g, hand, trail) {
       const p = hand.points;
       const links = [[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
-      g.save(); g.lineWidth = 2; g.strokeStyle = COLORS.cyan; g.shadowColor = COLORS.cyan; g.shadowBlur = 12;
-      for (const [a, b] of links) { g.beginPath(); g.moveTo(p[a].x, p[a].y); g.lineTo(p[b].x, p[b].y); g.stroke(); }
-      for (let i = 0; i < p.length; i++) { const isTip = fingertipIds.includes(i), r = isTip ? 8 : 5; g.fillStyle = isTip ? COLORS.gold : COLORS.cyan; g.shadowBlur = isTip ? 22 : 12; g.beginPath(); g.arc(p[i].x, p[i].y, r, 0, Math.PI * 2); g.fill(); if (isTip) { const pulse = 12 + Math.sin(frame * 0.2 + i) * 3; g.strokeStyle = 'rgba(0,245,255,0.8)'; g.lineWidth = 1.3; g.beginPath(); g.arc(p[i].x, p[i].y, pulse, 0, Math.PI * 2); g.stroke(); } }
+      g.save();
+      g.lineWidth = 1.4; g.strokeStyle = COLORS.soft; g.shadowColor = 'rgba(247, 217, 164, 0.25)'; g.shadowBlur = 8; g.lineCap = 'round'; g.lineJoin = 'round';
+      g.beginPath(); for (const [a, b] of links) { g.moveTo(p[a].x, p[a].y); g.lineTo(p[b].x, p[b].y); } g.stroke();
+      if (trail && trail.history.length > 1) {
+        g.strokeStyle = 'rgba(247, 217, 164, 0.25)'; g.lineWidth = 1;
+        g.beginPath(); trail.history.forEach((pt, i) => { if (!i) g.moveTo(pt.x, pt.y); else g.lineTo(pt.x, pt.y); }); g.stroke();
+      }
+      const center = palmCenter(hand);
+      g.shadowBlur = 4; g.strokeStyle = 'rgba(247, 217, 164, 0.55)'; g.lineWidth = 1;
+      g.beginPath(); g.arc(center.x, center.y, 16, 0, Math.PI * 2); g.stroke();
+      g.fillStyle = 'rgba(247, 217, 164, 0.5)'; g.beginPath(); g.arc(center.x, center.y, 3, 0, Math.PI * 2); g.fill();
+      for (let i = 0; i < p.length; i++) {
+        const isTip = fingertipIds.includes(i), r = isTip ? 4.5 : 3;
+        g.fillStyle = isTip ? COLORS.warm : COLORS.soft; g.beginPath(); g.arc(p[i].x, p[i].y, r, 0, Math.PI * 2); g.fill();
+        if (isTip) { g.strokeStyle = 'rgba(247, 217, 164, 0.45)'; g.beginPath(); g.arc(p[i].x, p[i].y, r + 6, 0, Math.PI * 2); g.stroke(); }
+      }
       g.restore();
     }
     function drawEnergyBeam(g, a, b, key) {
-      const d = dist(a, b), t = Math.max(1.8, 8 - d * 0.006), grad = g.createLinearGradient(a.x, a.y, b.x, b.y);
-      grad.addColorStop(0, COLORS.cyan); grad.addColorStop(0.5, '#7dfdff'); grad.addColorStop(1, COLORS.gold);
-      g.save(); g.lineWidth = t; g.strokeStyle = grad; g.shadowColor = COLORS.cyan; g.shadowBlur = 24; g.setLineDash([16, 10]); g.lineDashOffset = -(frame * 1.6); g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke();
-      for (let i = 0; i < 4; i++) { g.lineWidth = 1; g.strokeStyle = 'rgba(0,245,255,0.5)'; g.beginPath(); for (let j = 0; j <= 8; j++) { const u = j / 8, x = a.x + (b.x - a.x) * u, y = a.y + (b.y - a.y) * u + (Math.sin(frame * 0.34 + i * 1.5 + u * 7) * (3 + i)); if (j === 0) g.moveTo(x, y); else g.lineTo(x, y); } g.stroke(); }
+      const d = dist(a, b), t = Math.max(1.2, 5 - d * 0.004), grad = g.createLinearGradient(a.x, a.y, b.x, b.y);
+      grad.addColorStop(0, COLORS.cyan); grad.addColorStop(0.5, COLORS.white); grad.addColorStop(1, COLORS.gold);
+      g.save(); g.lineWidth = t; g.strokeStyle = grad; g.shadowColor = COLORS.cyan; g.shadowBlur = 16; g.setLineDash([12, 10]); g.lineDashOffset = -(frame * 1.1); g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke();
+      for (let i = 0; i < 3; i++) { g.lineWidth = 1; g.strokeStyle = 'rgba(235, 244, 255, 0.4)'; g.beginPath(); for (let j = 0; j <= 8; j++) { const u = j / 8, x = a.x + (b.x - a.x) * u, y = a.y + (b.y - a.y) * u + (Math.sin(frame * 0.32 + i * 1.5 + u * 7) * (2 + i)); if (j === 0) g.moveTo(x, y); else g.lineTo(x, y); } g.stroke(); }
       g.restore();
       if (!energySparks[key]) energySparks[key] = [];
-      if (Math.random() < 0.6) energySparks[key].push({ t: 0 });
+      if (Math.random() < 0.35) energySparks[key].push({ t: 0 });
       energySparks[key] = energySparks[key].filter((sp) => sp.t <= 1);
-      energySparks[key].forEach((sp) => { sp.t += 0.028; const x = a.x + (b.x - a.x) * sp.t, y = a.y + (b.y - a.y) * sp.t; particles.emit(x, y, 1, Math.random() > 0.6 ? COLORS.gold : COLORS.cyan, 1.2, 20); });
+      energySparks[key].forEach((sp) => { sp.t += 0.02; const x = a.x + (b.x - a.x) * sp.t, y = a.y + (b.y - a.y) * sp.t; particles.emit(x, y, 1, Math.random() > 0.6 ? COLORS.gold : COLORS.cyan, 1, 18); });
     }
     function drawPinchWeb(g, hand) {
       const tips = fingertipIds.map((id) => hand.points[id]);
-      g.save(); g.strokeStyle = 'rgba(0,245,255,0.6)'; g.fillStyle = 'rgba(0,245,255,0.1)'; g.shadowColor = COLORS.cyan; g.shadowBlur = 18; g.lineWidth = 1.4;
+      g.save(); g.strokeStyle = 'rgba(247, 217, 164, 0.45)'; g.fillStyle = 'rgba(247, 217, 164, 0.08)'; g.shadowColor = COLORS.gold; g.shadowBlur = 12; g.lineWidth = 1.1;
       for (let i = 0; i < tips.length; i++) for (let j = i + 1; j < tips.length; j++) { g.beginPath(); g.moveTo(tips[i].x, tips[i].y); g.lineTo(tips[j].x, tips[j].y); g.stroke(); }
       g.beginPath(); tips.forEach((pt, i) => { if (!i) g.moveTo(pt.x, pt.y); else g.lineTo(pt.x, pt.y); }); g.closePath(); g.fill(); g.restore();
     }
 
     // 6) HUD rendering function
     function drawHud(g, handCount, powerLevel) {
-      g.save(); g.strokeStyle = 'rgba(0,245,255,0.75)'; g.shadowColor = COLORS.cyan; g.shadowBlur = 12; g.lineWidth = 2;
+      g.save(); g.strokeStyle = 'rgba(235, 244, 255, 0.6)'; g.shadowColor = 'rgba(247, 217, 164, 0.35)'; g.shadowBlur = 10; g.lineWidth = 2;
       const m = 20, l = 30;
       [[m,m,m+l,m,m,m+l],[width-m,m,width-m-l,m,width-m,m+l],[m,height-m,m+l,height-m,m,height-m-l],[width-m,height-m,width-m-l,height-m,width-m,height-m-l]].forEach((c) => { g.beginPath(); g.moveTo(c[0], c[1]); g.lineTo(c[2], c[3]); g.moveTo(c[0], c[1]); g.lineTo(c[4], c[5]); g.stroke(); });
-      g.font = '14px monospace'; g.fillStyle = COLORS.cyan; g.fillText('J.A.R.V.I.S. INTERFACE v3.1', 24, 34); g.beginPath(); g.fillStyle = frame % 40 < 20 ? COLORS.gold : COLORS.cyan; g.arc(270, 29, 4, 0, Math.PI * 2); g.fill();
-      g.fillStyle = 'rgba(0,245,255,0.85)'; g.fillText(`FPS: ${fps.toFixed(1)}  HANDS: ${handCount}  GESTURE: ${activeGesture}`, 24, height - 24);
-      const barX = 24, barY = 70, barW = 12, barH = 150; g.strokeRect(barX, barY, barW, barH); const fillH = Math.max(4, Math.min(barH, barH * powerLevel)); g.fillStyle = 'rgba(0,245,255,0.5)'; g.fillRect(barX + 1, barY + barH - fillH, barW - 2, fillH);
-      const mapW = 140, mapH = 90, mapX = width - mapW - 24, mapY = 56; g.strokeRect(mapX, mapY, mapW, mapH); latestHands.forEach((hand) => { const p = palmCenter(hand), x = mapX + (p.x / width) * mapW, y = mapY + (p.y / height) * mapH; g.fillStyle = COLORS.gold; g.beginPath(); g.arc(x, y, 4, 0, Math.PI * 2); g.fill(); });
+      g.font = '14px monospace'; g.fillStyle = COLORS.soft; g.fillText('J.A.R.V.I.S. INTERFACE v3.1', 24, 34); g.beginPath(); g.fillStyle = frame % 40 < 20 ? COLORS.gold : COLORS.cyan; g.arc(270, 29, 4, 0, Math.PI * 2); g.fill();
+      g.fillStyle = 'rgba(235, 244, 255, 0.85)'; g.fillText(`FPS: ${fps.toFixed(1)}  HANDS: ${handCount}  GESTURE: ${activeGesture}`, 24, height - 24);
+      const barX = 24, barY = 70, barW = 12, barH = 150; g.strokeRect(barX, barY, barW, barH); const fillH = Math.max(4, Math.min(barH, barH * powerLevel)); g.fillStyle = 'rgba(142, 231, 255, 0.4)'; g.fillRect(barX + 1, barY + barH - fillH, barW - 2, fillH);
+      const mapW = 140, mapH = 90, mapX = width - mapW - 24, mapY = 56; g.strokeRect(mapX, mapY, mapW, mapH); latestHands.forEach((hand) => { const p = palmCenter(hand), x = mapX + (p.x / width) * mapW, y = mapY + (p.y / height) * mapH; g.fillStyle = COLORS.gold; g.beginPath(); g.arc(x, y, 3, 0, Math.PI * 2); g.fill(); });
       g.translate(width - 80, height - 80); g.rotate(frame * 0.01); for (let i = 0; i < 3; i++) { g.strokeStyle = i % 2 ? COLORS.gold : COLORS.cyan; g.beginPath(); g.arc(0, 0, 12 + i * 10, i, i + Math.PI * 1.2); g.stroke(); } g.restore();
     }
 
-    const spawnObject = (x, y) => { const type = objectTypes[Math.floor(Math.random() * objectTypes.length)], obj = new HolographicObject(type, x, y, 40 + Math.random() * 16); holoObjects.push(obj); particles.emit(x, y, 70, COLORS.gold, 3.4, 36); };
-    const emitShockwave = (pos) => { shockwaves.push({ x: pos.x, y: pos.y, r: 20, a: 1 }); flashAlpha = 0.4; particles.emit(pos.x, pos.y, 90, COLORS.cyan, 4, 30); };
+    const resetObjects = () => {
+      holoObjects.forEach((obj) => {
+        obj.pos.x = obj.home.x; obj.pos.y = obj.home.y; obj.vel.x = 0; obj.vel.y = 0; obj.rotation = 0; obj.grabbed = false;
+      });
+      globalObjectScale = 1;
+    };
+    const emitShockwave = (pos) => { shockwaves.push({ x: pos.x, y: pos.y, r: 20, a: 1 }); flashAlpha = 0.25; particles.emit(pos.x, pos.y, 50, COLORS.cyan, 3, 26); };
     function updateShockwaves() { for (const sw of shockwaves) { sw.r += 5; sw.a -= 0.02; } while (shockwaves.length && shockwaves[0].a <= 0) shockwaves.shift(); }
-    function drawShockwaves(g) { g.save(); for (const sw of shockwaves) { g.globalAlpha = sw.a; g.strokeStyle = COLORS.cyan; g.lineWidth = 2; g.shadowColor = COLORS.cyan; g.shadowBlur = 24; g.beginPath(); g.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2); g.stroke(); } g.restore(); }
+    function drawShockwaves(g) { g.save(); for (const sw of shockwaves) { g.globalAlpha = sw.a; g.strokeStyle = COLORS.cyan; g.lineWidth = 1.6; g.shadowColor = COLORS.cyan; g.shadowBlur = 16; g.beginPath(); g.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2); g.stroke(); } g.restore(); }
     function drawPointingLaser(g, hand) {
       const tip = hand.points[8], pip = hand.points[6], dx = tip.x - pip.x, dy = tip.y - pip.y, len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len;
       const t = []; if (ux > 0) t.push((width - tip.x) / ux); if (ux < 0) t.push((0 - tip.x) / ux); if (uy > 0) t.push((height - tip.y) / uy); if (uy < 0) t.push((0 - tip.y) / uy);
       const maxT = Math.min(...t.filter((v) => v > 0)), hit = { x: tip.x + ux * maxT, y: tip.y + uy * maxT }, grad = g.createLinearGradient(tip.x, tip.y, hit.x, hit.y);
       grad.addColorStop(0, COLORS.gold); grad.addColorStop(1, COLORS.cyan);
-      g.save(); g.strokeStyle = grad; g.lineWidth = 3; g.shadowBlur = 20; g.shadowColor = COLORS.cyan; g.beginPath(); g.moveTo(tip.x, tip.y); g.lineTo(hit.x, hit.y); g.stroke(); g.restore();
-      if (Math.random() < 0.35) particles.emit(hit.x, hit.y, 3, COLORS.gold, 2.4, 22);
+      g.save(); g.strokeStyle = grad; g.lineWidth = 2; g.shadowBlur = 14; g.shadowColor = COLORS.cyan; g.beginPath(); g.moveTo(tip.x, tip.y); g.lineTo(hit.x, hit.y); g.stroke(); g.restore();
+      if (Math.random() < 0.2) particles.emit(hit.x, hit.y, 2, COLORS.gold, 2, 20);
     }
     function detectAndApplyGestures() {
       activeGesture = 'NONE';
       const handStates = latestHands.map((hand) => ({ hand, open: isOpenPalm(hand), fist: isFist(hand), point: isPointing(hand), peace: isPeace(hand), pinch: pinchDistance(hand) < 30 }));
       for (const state of handStates) {
         const center = palmCenter(state.hand);
-        if (!handTrails.has(state.hand.idx)) handTrails.set(state.hand.idx, { last: center, vx: 0, vy: 0, grabbedObj: null, cooldowns: {} });
-        const tr = handTrails.get(state.hand.idx); tr.vx = center.x - tr.last.x; tr.vy = center.y - tr.last.y; tr.last = center;
+        if (!handTrails.has(state.hand.idx)) handTrails.set(state.hand.idx, { last: center, vx: 0, vy: 0, grabbedObj: null, grabOffset: 0, cooldowns: {}, history: [center] });
+        const tr = handTrails.get(state.hand.idx);
+        tr.vx = center.x - tr.last.x; tr.vy = center.y - tr.last.y; tr.last = center;
+        tr.history.push({ x: center.x, y: center.y });
+        if (tr.history.length > 18) tr.history.shift();
       }
       if (handStates.length === 2 && handStates.every((s) => s.open)) {
         const d = dist(palmCenter(handStates[0].hand), palmCenter(handStates[1].hand));
@@ -194,21 +255,34 @@
         const center = palmCenter(state.hand), tr = handTrails.get(state.hand.idx), now = performance.now();
         if (state.open && (!tr.cooldowns.open || now - tr.cooldowns.open > 1000)) { emitShockwave(center); tr.cooldowns.open = now; activeGesture = 'OPEN PALM'; }
         if (state.point) activeGesture = 'POINTING';
-        if (state.peace && (!tr.cooldowns.peace || now - tr.cooldowns.peace > 900)) { spawnObject(center.x, center.y); tr.cooldowns.peace = now; activeGesture = 'PEACE SIGN'; }
-        if (state.pinch) { activeGesture = 'PINCH'; particles.emit(state.hand.points[8].x, state.hand.points[8].y, 2, COLORS.gold, 1.8, 20); const nearObj = holoObjects.find((obj) => dist(obj.pos, state.hand.points[8]) < 55); if (nearObj && (!tr.cooldowns.pinch || now - tr.cooldowns.pinch > 350)) { nearObj.activate(); tr.cooldowns.pinch = now; particles.emit(nearObj.pos.x, nearObj.pos.y, 50, COLORS.cyan, 3.2, 28); } }
+        if (state.peace && (!tr.cooldowns.peace || now - tr.cooldowns.peace > 900)) { resetObjects(); tr.cooldowns.peace = now; activeGesture = 'RESET'; particles.emit(center.x, center.y, 30, COLORS.gold, 2.2, 22); }
+        if (state.pinch) { activeGesture = 'PINCH'; particles.emit(state.hand.points[8].x, state.hand.points[8].y, 1, COLORS.gold, 1.4, 18); const nearObj = holoObjects.find((obj) => dist(obj.pos, state.hand.points[8]) < 55); if (nearObj && (!tr.cooldowns.pinch || now - tr.cooldowns.pinch > 350)) { nearObj.activate(); tr.cooldowns.pinch = now; particles.emit(nearObj.pos.x, nearObj.pos.y, 26, COLORS.cyan, 2.6, 24); } }
       }
+      const activeIds = new Set(handStates.map((state) => state.hand.idx));
+      for (const key of handTrails.keys()) if (!activeIds.has(key)) handTrails.delete(key);
       return handStates;
     }
+    const handOrientation = (hand) => {
+      const a = hand.points[5], b = hand.points[17];
+      return Math.atan2(b.y - a.y, b.x - a.x);
+    };
     function handleObjectInteraction(handStates) {
       holoObjects.forEach((obj) => obj.hovered = false);
       for (const state of handStates) {
         const indexTip = state.hand.points[8], center = palmCenter(state.hand), tr = handTrails.get(state.hand.idx);
+        if (!tr) continue;
         let nearest = null, nearestDist = Infinity;
         for (const obj of holoObjects) { const d = dist(indexTip, obj.pos); if (d < 40 && d < nearestDist) { nearest = obj; nearestDist = d; } }
         if (nearest) nearest.hovered = true;
-        if (state.fist && nearest && !tr.grabbedObj) { tr.grabbedObj = nearest; nearest.grabbed = true; }
-        if (state.fist && tr.grabbedObj) { tr.grabbedObj.pos.x += (center.x - tr.grabbedObj.pos.x) * 0.35; tr.grabbedObj.pos.y += (center.y - tr.grabbedObj.pos.y) * 0.35; tr.grabbedObj.vel.x = tr.vx * 0.25; tr.grabbedObj.vel.y = tr.vy * 0.25; }
-        if (!state.fist && tr.grabbedObj) { const speed = Math.hypot(tr.vx, tr.vy); tr.grabbedObj.grabbed = false; if (speed > 18) { tr.grabbedObj.vel.x = tr.vx * 0.7; tr.grabbedObj.vel.y = tr.vy * 0.7; particles.emit(tr.grabbedObj.pos.x, tr.grabbedObj.pos.y, 80, COLORS.gold, 4, 30); activeGesture = 'THROW'; } tr.grabbedObj = null; }
+        if (state.fist && nearest && !tr.grabbedObj) { tr.grabbedObj = nearest; nearest.grabbed = true; tr.grabOffset = nearest.rotation - handOrientation(state.hand); activeGesture = 'GRAB'; }
+        if (state.fist && tr.grabbedObj) {
+          tr.grabbedObj.pos.x += (center.x - tr.grabbedObj.pos.x) * 0.28;
+          tr.grabbedObj.pos.y += (center.y - tr.grabbedObj.pos.y) * 0.28;
+          tr.grabbedObj.vel.x = tr.vx * 0.2; tr.grabbedObj.vel.y = tr.vy * 0.2;
+          tr.grabbedObj.rotation = handOrientation(state.hand) + tr.grabOffset;
+          activeGesture = 'GRAB';
+        }
+        if (!state.fist && tr.grabbedObj) { const speed = Math.hypot(tr.vx, tr.vy); tr.grabbedObj.grabbed = false; if (speed > 18) { tr.grabbedObj.vel.x = tr.vx * 0.6; tr.grabbedObj.vel.y = tr.vy * 0.6; particles.emit(tr.grabbedObj.pos.x, tr.grabbedObj.pos.y, 50, COLORS.gold, 3, 26); activeGesture = 'THROW'; } tr.grabbedObj = null; tr.grabOffset = 0; }
       }
     }
     function renderScene(dt) {
@@ -217,16 +291,15 @@
       const handStates = detectAndApplyGestures(); handleObjectInteraction(handStates);
       if (latestHands.length >= 2) { drawEnergyBeam(ctx, latestHands[0].points[8], latestHands[1].points[8], 'index'); drawEnergyBeam(ctx, latestHands[0].points[4], latestHands[1].points[4], 'thumb'); }
       latestHands.forEach((hand) => {
-        drawHandSkeleton(ctx, hand);
-        if (pinchDistance(hand) < 30) { drawPinchWeb(ctx, hand); ctx.save(); ctx.strokeStyle = COLORS.gold; ctx.shadowColor = COLORS.gold; ctx.shadowBlur = 14; ctx.beginPath(); ctx.arc(hand.points[8].x, hand.points[8].y, 16 + Math.sin(frame * 0.3) * 2, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
+        drawHandSkeleton(ctx, hand, handTrails.get(hand.idx));
+        if (pinchDistance(hand) < 30) { drawPinchWeb(ctx, hand); ctx.save(); ctx.strokeStyle = COLORS.gold; ctx.shadowColor = COLORS.gold; ctx.shadowBlur = 10; ctx.beginPath(); ctx.arc(hand.points[8].x, hand.points[8].y, 14 + Math.sin(frame * 0.3) * 2, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
         if (isPointing(hand)) drawPointingLaser(ctx, hand);
-        fingertipIds.forEach((id) => { const tip = hand.points[id]; particles.emit(tip.x, tip.y, 1, Math.random() > 0.8 ? COLORS.gold : COLORS.cyan, 1.4, 30); });
       });
       holoObjects.forEach((obj) => { obj.update({ w: width, h: height }, dt); obj.draw(ctx, globalObjectScale); });
       particles.update(holoObjects); particles.draw(ctx); updateShockwaves(); drawShockwaves(ctx);
       const motion = latestHands.reduce((acc, hand) => { const tr = handTrails.get(hand.idx); return acc + (tr ? Math.hypot(tr.vx, tr.vy) : 0); }, 0);
       drawHud(ctx, latestHands.length, Math.min(1, motion / 40));
-      if (flashAlpha > 0.01) { ctx.save(); ctx.fillStyle = `rgba(0,245,255,${flashAlpha})`; ctx.fillRect(0, 0, width, height); ctx.restore(); }
+      if (flashAlpha > 0.01) { ctx.save(); ctx.fillStyle = `rgba(255,255,255,${flashAlpha})`; ctx.fillRect(0, 0, width, height); ctx.restore(); }
       flashAlpha *= 0.9;
       noSignalEl.style.display = (performance.now() - lastDetectionAt > 2000 || !handsReady) ? 'grid' : 'none';
       fpsFrames++; const now = performance.now(); if (now - lastFpsTime >= 500) { fps = (fpsFrames * 1000) / (now - lastFpsTime); lastFpsTime = now; fpsFrames = 0; }
